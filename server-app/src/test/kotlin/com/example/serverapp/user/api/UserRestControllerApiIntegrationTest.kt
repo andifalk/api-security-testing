@@ -1,10 +1,15 @@
 package com.example.serverapp.user.api
 
 import com.epages.restdocs.raml.RamlResourceDocumentation.ramlResource
+import com.example.serverapp.user.boundary.User
 import com.example.serverapp.user.boundary.UserService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.argThat
+import org.mockito.BDDMockito.eq
+import org.mockito.BDDMockito.given
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.boot.test.mock.mockito.SpyBean
@@ -23,6 +28,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
+import java.util.*
 
 @ExtendWith(SpringExtension::class, RestDocumentationExtension::class)
 @WebMvcTest(UserRestController::class)
@@ -49,8 +55,18 @@ internal class UserRestControllerApiIntegrationTest {
     @Test
     fun getAllUsers() {
 
+        given(userService.findAllUsers()).willReturn(listOf(
+            User(
+                    UUID.randomUUID(),
+                    "hans.muster@example.com",
+                    "Hans",
+                    "Muster",
+                    "secret",
+                    listOf("ROLE_USER"))
+        ))
+
         mockMvc.perform(get("/users")
-                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE))
+                .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk)
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 //.andExpect(content().json(expectedResponse, true))
@@ -59,6 +75,24 @@ internal class UserRestControllerApiIntegrationTest {
 
     @Test
     fun getUser() {
+
+        val userIdentifier = UUID.randomUUID()
+        given(userService.findUserByIdentifier(userIdentifier)).willReturn(
+                User(
+                        userIdentifier,
+                        "hans.muster@example.com",
+                        "Hans",
+                        "Muster",
+                        "secret",
+                        listOf("ROLE_USER"))
+        )
+
+        mockMvc.perform(get("/users/{userId}", userIdentifier)
+                .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk)
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                //.andExpect(content().json(expectedResponse, true))
+                .andDo(document("user-get", ramlResource()))
     }
 
     @Test

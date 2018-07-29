@@ -9,4 +9,10 @@ class UserResourceAssembler : ResourceAssemblerSupport<User, UserResource>(UserR
 
     override fun toResource(entity: User?): UserResource = createResourceWithId(entity?.identifier, entity)
 
+    override fun instantiateResource(persistedUser: User) = UserResource(
+            identifier = persistedUser.identifier,
+            email = persistedUser.username,
+            firstName = persistedUser.firstName,
+            lastName = persistedUser.lastName
+    )
 }

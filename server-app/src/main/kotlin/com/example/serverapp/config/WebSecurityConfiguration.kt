@@ -23,7 +23,7 @@ class WebSecurityConfiguration : WebSecurityConfigurerAdapter() {
 
     @Bean
     fun serverUserDetailsService(): UserDetailsService {
-        return MyUserDetailsService()
+        return MyUserDetailsService(passwordEncoder())
     }
 
     @Bean

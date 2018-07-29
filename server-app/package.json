@@ -1,0 +1,13 @@
+{
+  "name": "raml-to-oa20-converter",
+  "version": "1.0.0",
+  "description": "RAML to OpenAPI converter",
+  "scripts": {
+    "convert": "node convert.js > ./build/api.json"
+  },
+  "private": true,
+  "dependencies": {
+    "oas-raml-converter": "^1.1.35"
+  },
+  "devDependencies": {}
+}
